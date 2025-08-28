@@ -13,10 +13,10 @@ type ArticleType = {
 };
 
 const Articles = () => {
-  const ownerId = localStorage.getItem("user-id");
   const [data, setData] = useState<ArticleType[] | null>(null);
 
   useEffect(() => {
+    const ownerId = localStorage.getItem("user-id");
     const initialFetch = async () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles?where=ownerId%20%3D%20'${ownerId}'`,
