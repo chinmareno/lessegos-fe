@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 const CompanyOverview = () => {
   return (
@@ -60,6 +61,12 @@ const CompanyOverview = () => {
             </p>
           </div>
         </div>
+        <Link
+          className="cursor-pointer flex justify-end mt-5 w-full text-blue-600 hover:underline"
+          href="/about"
+        >
+          More About Us
+        </Link>
       </div>
     </section>
   );

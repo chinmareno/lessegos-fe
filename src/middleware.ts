@@ -6,12 +6,12 @@ export function middleware(request: NextRequest) {
     .getAll()
     .find((c) => c.name.startsWith(cookieNamePrefix));
   const pathname = request.nextUrl.pathname;
-  console.log(authCookie);
-  if (!authCookie) {
-    if (pathname !== "/signup" && pathname !== "/signin") {
-      return NextResponse.redirect(new URL("/signin", request.url));
-    }
-  }
+
+  // if (!authCookie) {
+  //   if (pathname !== "/signup" && pathname !== "/signin") {
+  //     return NextResponse.redirect(new URL("/signin", request.url));
+  //   }
+  // }
   if (authCookie) {
     if (pathname === "/signin" || pathname === "/signup") {
       return NextResponse.redirect(new URL("/", request.url));

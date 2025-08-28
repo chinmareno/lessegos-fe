@@ -4,10 +4,11 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SiShopee } from "react-icons/si";
-import { FaTiktok } from "react-icons/fa";
+import { FaInstagram, FaTiktok } from "react-icons/fa";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { toast } from "sonner";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -27,28 +28,65 @@ export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-100 pt-16 pb-8">
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
-        {/* Store / Social Icons */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <h2 className="text-lg font-semibold">Our Stores</h2>
-          <div className="flex gap-6 mt-4">
+          <h2 className="text-lg font-semibold">Our Social</h2>
+          <div className="flex gap-9 mt-8 items-center">
             <Tooltip delayDuration={500}>
               <TooltipTrigger asChild>
-                <Link href="#">
+                <Link target="_blank" href="https://www.tiktok.com/@lessegos">
+                  <FaTiktok className="w-8 h-8 p-1 rounded-md" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent className="mb-3.5">
+                <p>Tiktok</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger asChild>
+                <Link
+                  target="_blank"
+                  href="https://www.instagram.com/_lessegos_/"
+                >
+                  <FaInstagram className="w-8 h-8 p-0.5 bg-pink-500 text-white rounded-md" />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent className="mb-3.5">
+                <p>Instagram</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </div>
+        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+          <h2 className="text-lg font-semibold">Our Stores</h2>
+          <div className="flex gap-6 mt-4 items-center">
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger asChild>
+                <Link target="_blank" href="https://shopee.co.id/lessegos">
                   <SiShopee className="w-8 h-8 bg-orange-500 p-1 rounded-md" />
                 </Link>
               </TooltipTrigger>
-              <TooltipContent>
+              <TooltipContent className="mb-3.5">
                 <p>Shopee</p>
               </TooltipContent>
             </Tooltip>
             <Tooltip delayDuration={500}>
               <TooltipTrigger asChild>
-                <Link href="#">
-                  <FaTiktok className="w-8 h-8 p-1 rounded-md" />
+                <Link
+                  target="_blank"
+                  href="https://www.tokopedia.com/lessegosapparel"
+                >
+                  <div className="w-14 h-14 relative">
+                    <Image
+                      src="/tokopedialogo.png"
+                      alt="Tokopedia"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Tiktok</p>
+                <p>Tokopedia</p>
               </TooltipContent>
             </Tooltip>
           </div>

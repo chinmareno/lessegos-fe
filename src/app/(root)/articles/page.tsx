@@ -13,13 +13,11 @@ type ArticleType = {
 };
 
 const Articles = () => {
-  const token = localStorage.getItem("user-token");
   const ownerId = localStorage.getItem("user-id");
   const [data, setData] = useState<ArticleType[] | null>(null);
 
   useEffect(() => {
     const initialFetch = async () => {
-      console.log(ownerId);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles?where=ownerId%20%3D%20'${ownerId}'`,
         {
@@ -31,13 +29,13 @@ const Articles = () => {
 
       const data = (await res.json()) as ArticleType[];
 
-      console.log(data);
       const reversedOrderData = data.sort(
         (a, b) => Number(b.created) - Number(a.created)
       );
       setData(reversedOrderData);
     };
     initialFetch();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (data?.length === 0) return <p>No articles found. try create one</p>;

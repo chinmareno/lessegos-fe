@@ -1,10 +1,8 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const LogoutButton = () => {
-  const pathname = usePathname();
-  const hideLogout = pathname === "/signin" || pathname === "/signup";
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -29,12 +27,20 @@ export const LogoutButton = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("user-id");
-    if (!userId) {
+
+    const allCookies = document.cookie;
+
+    const cookies = Object.fromEntries(
+      allCookies.split("; ").map((c) => {
+        const [key, value] = c.split("=");
+        return [key, decodeURIComponent(value)];
+      })
+    );
+
+    if (!cookies["user-auth-cookie"] || !userId) {
       handleLogout();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  return (
-    <div>{!hideLogout && <button onClick={handleLogout}>Log Out</button>}</div>
-  );
+  return <button onClick={handleLogout}>Log Out</button>;
 };

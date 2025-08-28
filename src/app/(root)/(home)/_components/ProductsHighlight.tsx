@@ -10,25 +10,22 @@ const products = [
     description:
       "Premium cotton oversized t-shirts designed for comfort and effortless style.",
     image: "/product1.webp",
-    link: "/products",
-    cta: "Shop Now",
+    cta: "View Products",
   },
   {
     title: "Best Sale Products",
     description:
       "Our top-selling items loved by customers, featuring minimalist prints and streetwear-inspired cuts.",
     image: "/product2.webp",
-    link: "/products",
-    cta: "Explore",
     badge: "Best Seller",
+    cta: "View Products",
   },
   {
     title: "Unisex Collection",
     description:
       "Gender-neutral pieces that fit every body, made for everyday wear.",
     image: "/product3.webp",
-    link: "/products",
-    cta: "View All",
+    cta: "View Products",
   },
 ];
 
@@ -72,7 +69,7 @@ export default function ProductsHighlight() {
               {/* CTA */}
               <CardFooter className="flex justify-center px-6 pb-6">
                 <Link
-                  href={product.link}
+                  href="/products"
                   className="bg-black text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 hover:-translate-y-0.5 transition-transform duration-200 w-full sm:w-auto text-center"
                 >
                   {product.cta}

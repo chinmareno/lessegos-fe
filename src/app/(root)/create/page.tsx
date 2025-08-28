@@ -21,7 +21,7 @@ export default function Create() {
       ...data,
       slug: data.title,
     };
-    console.log(dataWithCreated);
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles`,
       {

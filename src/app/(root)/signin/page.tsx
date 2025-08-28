@@ -8,7 +8,7 @@ type LoginFormInputs = {
   password: string;
 };
 
-const Signin = () => {
+const SigninPage = () => {
   const { register, handleSubmit } = useForm<LoginFormInputs>();
   const router = useRouter();
   const onSubmit = async (data: LoginFormInputs) => {
@@ -34,10 +34,7 @@ const Signin = () => {
 
       const user = await res.json();
 
-      console.log("User logged in:", user);
-
       if (user.objectId) {
-        console.log("setting local");
         localStorage.setItem("user-id", user.objectId);
 
         document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Strict`;
@@ -85,4 +82,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SigninPage;

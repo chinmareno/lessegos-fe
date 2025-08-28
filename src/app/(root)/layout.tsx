@@ -6,7 +6,7 @@ const AppLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
-    <div className="pt-[121px] sm:pt-[174px]">
+    <div className="pt-[121px] md:pt-[192px]">
       {children}
       <Footer />
     </div>

@@ -8,7 +8,7 @@ type LoginFormInputs = {
   password: string;
 };
 
-const Signup = () => {
+const SignupPage = () => {
   const { register, handleSubmit } = useForm<LoginFormInputs>();
   const router = useRouter();
 
@@ -42,12 +42,10 @@ const Signup = () => {
       );
 
       if (!res.ok) {
-        throw new Error("SIgnup failed");
+        throw new Error("Signup failed");
       }
 
       const user = await res.json();
-
-      console.log("User Signed in:", user);
 
       if (user.objectId) {
         localStorage.setItem("user-id", user.objectId);
@@ -96,4 +94,4 @@ const Signup = () => {
     </div>
   );
 };
-export default Signup;
+export default SignupPage;
