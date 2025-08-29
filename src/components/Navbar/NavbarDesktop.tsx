@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, Star, UserRound } from "lucide-react";
 import { handleLogout } from "@/lib/handleLogout";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { useRouter } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 
-const navItems = ["home", "products", "about", "articles"];
+const navItems = ["home", "products", "about", "articles"] as const;
 const promotions = [
   "🎉 Promo: Free shipping for orders above 200k!",
   "🔥 Limited Edition Oversized Tees – Shop Now!",
@@ -27,6 +28,7 @@ export default function NavbarDesktop() {
 
   const router = useRouter();
   const { userId, clearUserId } = useAuthStore();
+  const { setWishlistMode, wishlistMode } = useWishlistModeStore();
 
   useEffect(() => {
     if (navbarRef.current) setNavbarHeight(navbarRef.current.offsetHeight);
@@ -104,6 +106,10 @@ export default function NavbarDesktop() {
               key={item}
               href={item === "home" ? "/" : "/" + item}
               className="place-self-center z-10 relative group"
+              onClick={() => {
+                if (item === "products" && wishlistMode === true)
+                  setWishlistMode(false);
+              }}
             >
               {item}
               <span className="absolute -bottom-4 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-200 scale-x-0 group-hover:scale-x-100" />
@@ -112,23 +118,41 @@ export default function NavbarDesktop() {
         </div>
 
         {userId ? (
-          <Tooltip delayDuration={500}>
-            <TooltipTrigger asChild>
-              <button
-                className="absolute cursor-pointer flex items-center gap-2 top-4 right-20 z-20 p-2 rounded-md"
-                onClick={async () => {
-                  clearUserId();
-                  await handleLogout();
-                  router.push("/signin");
-                }}
-              >
-                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Log Out</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex absolute top-4 right-20 z-20 ">
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    setWishlistMode(true);
+                    router.push("/products");
+                  }}
+                  className="mr-7 lg:mr-11 cursor-pointer"
+                >
+                  <Star className="w-7 h-7 text-black" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Wishlist</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip delayDuration={500}>
+              <TooltipTrigger asChild>
+                <button
+                  className="cursor-pointer flex items-center p-2 rounded-md"
+                  onClick={async () => {
+                    clearUserId();
+                    await handleLogout();
+                    router.push("/signin");
+                  }}
+                >
+                  <LogOut className="w-7 h-7" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Log Out</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         ) : (
           <Tooltip delayDuration={500}>
             <TooltipTrigger asChild>

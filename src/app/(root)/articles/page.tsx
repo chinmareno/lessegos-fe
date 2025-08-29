@@ -175,7 +175,7 @@ const Articles = () => {
             const date = new Date(article.created);
             return (
               <ArticleCard
-                key={article.slug}
+                key={article.author + article.created}
                 author={article.author}
                 content={article.content}
                 created={date.toLocaleDateString()}

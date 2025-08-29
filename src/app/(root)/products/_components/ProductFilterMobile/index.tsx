@@ -52,11 +52,12 @@ export default function ProductFilterMobile({
       <DialogTrigger asChild>
         <Button
           variant="none"
-          className="w-40 py-2 border-[1.5px] bg-white text-black justify-between font-medium cursor-pointer rounded-none text-sm"
+          className="w-28 sm:w-40 py-2 border-[1.5px] bg-white items-center text-black justify-between font-medium cursor-pointer rounded-none text-sm"
         >
           <span className="text-black">Filter</span>
-          <span className="text-muted-foreground font-sans text-xs">
-            {filteredProductsLength} Results
+          <span className="text-muted-foreground flex font-sans text-xs">
+            {filteredProductsLength}
+            <span className="ml-0.5 hidden sm:flex">Results</span>
           </span>
         </Button>
       </DialogTrigger>

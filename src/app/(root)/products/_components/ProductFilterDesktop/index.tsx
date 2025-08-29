@@ -40,7 +40,6 @@ export default function Filters({
         </div>
         <hr className="bg-gray-300 py-[0.5px]" />
 
-        {/* Category */}
         <AccordionItem value="category">
           <AccordionTrigger>
             <div>
@@ -59,7 +58,6 @@ export default function Filters({
           </AccordionContent>
         </AccordionItem>
 
-        {/* Size */}
         <AccordionItem value="size">
           <AccordionTrigger className="font-semibold">
             <div>

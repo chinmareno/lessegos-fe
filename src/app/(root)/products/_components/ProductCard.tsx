@@ -1,8 +1,9 @@
 "use client";
 
+import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ProductCardProps {
   name: string;
@@ -14,6 +15,8 @@ interface ProductCardProps {
   hoverImageUrl?: string;
   placeholderLogo: string;
   productLink: string;
+  wishlist: boolean;
+  wishlistClick: (productName: string) => void;
 }
 
 export default function ProductCard({
@@ -26,9 +29,12 @@ export default function ProductCard({
   placeholderLogo,
   productLink,
   hoverImageUrl,
+  wishlist,
+  wishlistClick,
 }: ProductCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [wishlistState, setWishlistState] = useState(false);
 
   const formatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -36,8 +42,28 @@ export default function ProductCard({
     minimumFractionDigits: 0,
   });
 
+  useEffect(() => {
+    if (wishlist !== wishlistState) {
+      setWishlistState(wishlist);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wishlist]);
+
   return (
-    <div className="max-w-sm overflow-hidden transition">
+    <div className="max-w-sm overflow-hidden transition relative">
+      <button
+        onClick={() => {
+          setWishlistState((prev) => !prev);
+          wishlistClick(name);
+        }}
+        className="absolute group cursor-pointer top-1 right-1 z-10"
+      >
+        <Star
+          className={`${
+            wishlistState ? "fill-yellow-500" : "group-hover:fill-yellow-500"
+          } text-yellow-500 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7`}
+        />
+      </button>
       <Link href={productLink} target="_blank" rel="noopener noreferrer">
         <div
           onMouseEnter={() => setHovered(true)}

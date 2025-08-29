@@ -3,13 +3,14 @@
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { LogOut, Menu, UserRound } from "lucide-react";
+import { LogOut, Menu, Star, UserRound } from "lucide-react";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { handleLogout } from "@/lib/handleLogout";
 import { useRouter } from "next/navigation";
+import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 
 const Navbar = () => {
-  const navItems = ["home", "products", "about", "articles"];
+  const navItems = ["home", "products", "about", "articles"] as const;
 
   const promotions = [
     "🎉 Promo: Free shipping for orders above 200k!",
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { userId, clearUserId } = useAuthStore();
+  const { setWishlistMode, wishlistMode } = useWishlistModeStore();
 
   const navbarRef = useRef<HTMLDivElement>(null);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -83,19 +85,19 @@ const Navbar = () => {
         <div className="relative">
           {userId ? (
             <button
-              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20 p-2 rounded-md"
+              className="lg:hidden absolute flex items-center gap-2 bg-amber-200 top-4 left-4 z-20"
               onClick={async () => {
                 await handleLogout();
                 clearUserId();
                 router.push("/signin");
               }}
             >
-              <LogOut className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+              <LogOut className="w-6 h-6 md:w-7 md:h-7" />
             </button>
           ) : (
             <Link
               href="/signin"
-              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20 p-2 rounded-md"
+              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
             >
               <UserRound className="w-6 h-6 md:w-7 md:h-7" />
             </Link>
@@ -120,30 +122,25 @@ const Navbar = () => {
               </span>
             </h2>
           </Link>
-
-          <button
-            onClick={toggleMobileMenu}
-            className="lg:hidden absolute top-4 right-4 z-20 p-2 rounded-md"
-            aria-label="Toggle mobile menu"
-          >
-            <Menu className="w-6 h-6 md:w-7 md:h-7" />
-          </button>
-
-          <hr className="bg-black py-1 mt-4 lg:mt-0" />
-
-          <div className="hidden lg:flex uppercase bg-white relative items-center py-4 justify-center gap-20">
-            <span className="w-full absolute z-0 bottom-0 left-0 border-b-2 border-b-gray-400" />
-            {navItems.map((item) => (
-              <Link
-                key={item}
-                href={item === "home" ? "/" : "/" + item}
-                className="place-self-center z-10 relative group"
-              >
-                {item}
-                <span className="absolute -bottom-4 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-200 scale-x-0 group-hover:scale-x-100" />
-              </Link>
-            ))}
+          <div className="lg:hidden absolute flex items-center top-4 right-1 sm:right-4 z-20">
+            <button
+              onClick={() => {
+                setWishlistMode(true);
+                router.push("/products");
+              }}
+              className="mr-2.5 md:mr-7"
+            >
+              <Star className="w-5 h-5 md:w-6 md:h-6 text-black " />
+            </button>
+            <button
+              onClick={toggleMobileMenu}
+              className=" p-2"
+              aria-label="Toggle mobile menu"
+            >
+              <Menu className="w-6 h-6 md:w-7 md:h-7" />
+            </button>
           </div>
+          <hr className="bg-black py-1 mt-4 lg:mt-0" />
         </div>
       </div>
 
@@ -192,7 +189,11 @@ const Navbar = () => {
                   <Link
                     href={item === "home" ? "/" : "/" + item}
                     className="block px-6 py-3 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors duration-200 capitalize font-medium"
-                    onClick={closeMobileMenu}
+                    onClick={() => {
+                      if (item === "products" && wishlistMode === true)
+                        setWishlistMode(false);
+                      closeMobileMenu();
+                    }}
                   >
                     {item}
                   </Link>

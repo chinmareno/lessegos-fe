@@ -14,6 +14,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { toast } from "sonner";
+import { useAuthStore } from "@/lib/useAuthStore";
+import { useWishlistModeStore } from "../../../lib/useWishlistModeStore";
+import { useRouter } from "next/navigation";
 
 const ITEMS_PER_PAGE = 36;
 
@@ -22,6 +26,12 @@ export type SortOption =
   | "Price High to Low"
   | "Recommended";
 
+export type Wishlist = {
+  productName: string;
+  ownerId: string;
+  objectId: string;
+};
+
 const ProductsPage = () => {
   const [category, setCategory] = useState("All");
   const [selectedTopsSize, setSelectedTopsSize] = useState<string[]>([]);
@@ -29,11 +39,34 @@ const ProductsPage = () => {
   const [sortOption, setSortOption] = useState<SortOption>("Recommended");
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [currentPage, setCurrentPage] = useState(0);
+  const { wishlistMode } = useWishlistModeStore();
+  const [wishlist, setWishlist] = useState<Wishlist[]>([]);
 
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
   const totalPage = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
+  const router = useRouter();
+  const { userId } = useAuthStore();
+
+  useEffect(() => {
+    (async function fetchWishlist() {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${userId}'`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (res.ok) {
+        setWishlist(await res.json());
+      } else {
+        toast.error("Failed to fetch wishlist");
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (category === "") return;
@@ -78,15 +111,72 @@ const ProductsPage = () => {
       });
     }
 
-    setFilteredProducts(updatedProducts);
-  }, [category, selectedTopsSize, selectedBottomsSize, sortOption]);
+    if (wishlistMode) {
+      const wishlistProducts = updatedProducts.filter((item) => {
+        const wishlistProductName = wishlist.map((w) => w.productName);
+        return wishlistProductName.includes(item.name);
+      });
+      setFilteredProducts(wishlistProducts);
+    } else {
+      setFilteredProducts(updatedProducts);
+    }
+  }, [
+    category,
+    selectedTopsSize,
+    selectedBottomsSize,
+    sortOption,
+    wishlistMode,
+    wishlist,
+  ]);
+
+  const handleWishlistClick = async (productName: string) => {
+    if (!userId) return router.push("/signin");
+
+    const data = { productName, ownerId: userId };
+
+    const foundedWishlist = wishlist.find(
+      (item) => item.productName === productName
+    );
+
+    const isAdding = !foundedWishlist;
+
+    if (isAdding) {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      toast.success("Added to wishlist");
+    } else {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ objectId: foundedWishlist.objectId }),
+      });
+      toast.success("Removed from wishlist");
+    }
+    (async function fetchWishlist() {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${userId}'`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (res.ok) {
+        setWishlist(await res.json());
+      } else {
+        toast.error("Failed to fetch wishlist");
+      }
+    })();
+  };
 
   return (
     <div className="mt-7 mb-12 mx-[calc(100vw*1/20)] lg:mx-[calc(100vw*1/10)]">
       <h2 className="pb-6 uppercase font-thin font-sans text-red-500 text-2xl">
-        Product{" "}
+        <span>{wishlistMode ? "Wishlist" : "Product"}</span>
         <span
-          className={`text-black transition-opacity duration-500 ${
+          className={`text-black transition-opacity ml-2 duration-500 ${
             category ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -108,7 +198,7 @@ const ProductsPage = () => {
           />
         </div>
         <div className="flex flex-col w-full">
-          <div className="text-muted-foreground w-full flex lg:block sticky z-10 top-36 lg:top-20 font-sans text-end mb-4">
+          <div className="text-muted-foreground w-full flex lg:block sticky z-20 top-36 lg:top-20 font-sans text-end mb-4">
             <div className="lg:hidden">
               <ProductFilterMobile
                 selectedTopsSize={selectedTopsSize}
@@ -148,6 +238,10 @@ const ProductsPage = () => {
                   hoverImageUrl={`/products/${product.name}2.webp`}
                   placeholderLogo="/logo.jpg"
                   productLink={product.productLink}
+                  wishlist={
+                    !!wishlist.find((item) => item.productName === product.name)
+                  }
+                  wishlistClick={handleWishlistClick}
                 />
               ))
             )}

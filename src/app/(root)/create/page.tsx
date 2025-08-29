@@ -37,7 +37,6 @@ export default function Create() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const dataWithSlug = {
       ...data,
-      slug: data.title + new Date().getTime().toString(),
       ownerId: userId,
     };
 
