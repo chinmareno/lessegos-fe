@@ -12,10 +12,10 @@ import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 
 const navItems = ["home", "products", "about", "articles"] as const;
 const promotions = [
-  "🎉 Promo: Free shipping for orders above 200k!",
-  "🔥 Limited Edition Oversized Tees – Shop Now!",
-  "💳 Secure checkout via Shopee & TikTok Shop!",
-  "🚀 Fast delivery across Indonesia!",
+  "🛍️ Kaos oversized nyaman untuk gaya sehari-hari!",
+  "✨ Desain unisex – pas dipakai siapa saja!",
+  "💳 Belanja mudah lewat Shopee & Tokopedia!",
+  "🚚 Pengiriman cepat ke seluruh Indonesia!",
 ];
 
 export default function NavbarDesktop() {
