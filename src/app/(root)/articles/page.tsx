@@ -95,7 +95,7 @@ const Articles = () => {
         </DropdownMenu>
       </div>
 
-      <div className="md:hidden flex justify-center bg-amber-200">
+      <div className="md:hidden flex justify-center">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="min-w-[150px] justify-between">
