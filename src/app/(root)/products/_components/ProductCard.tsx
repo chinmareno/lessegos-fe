@@ -65,7 +65,7 @@ export default function ProductCard({
         </div>
         <div className="py-2 pr-2 text-sm">
           <h2 className="font-semibold text-base leading-5 min-h-[2.5rem]">
-            {name}
+            {name.split(" ").slice(1).join(" ")}
           </h2>
 
           <p className="text-gray-500 mb-4">{material}</p>

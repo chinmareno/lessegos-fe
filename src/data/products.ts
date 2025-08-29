@@ -2690,7 +2690,7 @@ export const products: Product[] = [
     category: "Hoodie",
   },
   {
-    name: "Lessegos Hoodie Hitam Regular Pleasure ",
+    name: "Lessegos Hoodie Hitam Regular Pleasure",
     material: "Katun",
     price: 350000,
     discountPrice: 221500,

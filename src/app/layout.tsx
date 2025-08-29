@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={`${lora.className} antialiased`}>
         <Navbar />
         <main>{children}</main>
-        <Toaster richColors />
+        <Toaster expand visibleToasts={2} richColors />
       </body>
     </html>
   );

@@ -3,6 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import { LogOut, UserRound } from "lucide-react";
+import { handleLogout } from "@/lib/handleLogout";
+import { useAuthStore } from "@/lib/useAuthStore";
+import { useRouter } from "next/navigation";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 const navItems = ["home", "products", "about", "articles"];
 const promotions = [
@@ -19,6 +24,9 @@ export default function NavbarDesktop() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const navbarRef = useRef<HTMLDivElement>(null);
   const [navbarHeight, setNavbarHeight] = useState(0);
+
+  const router = useRouter();
+  const { userId, clearUserId } = useAuthStore();
 
   useEffect(() => {
     if (navbarRef.current) setNavbarHeight(navbarRef.current.offsetHeight);
@@ -102,6 +110,40 @@ export default function NavbarDesktop() {
             </Link>
           ))}
         </div>
+
+        {userId ? (
+          <Tooltip delayDuration={500}>
+            <TooltipTrigger asChild>
+              <button
+                className="absolute cursor-pointer flex items-center gap-2 top-4 right-20 z-20 p-2 rounded-md"
+                onClick={async () => {
+                  clearUserId();
+                  await handleLogout();
+                  router.push("/signin");
+                }}
+              >
+                <LogOut className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Log Out</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          <Tooltip delayDuration={500}>
+            <TooltipTrigger asChild>
+              <Link
+                href="/signin"
+                className="absolute flex items-center gap-2 top-4 right-20 z-20 p-2 rounded-md"
+              >
+                <UserRound className="w-6 h-6 md:w-7 md:h-7" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Login</p>
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </div>
   );

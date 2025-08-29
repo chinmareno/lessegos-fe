@@ -26,7 +26,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-900 text-gray-100 pt-16 pb-8">
+    <footer className="bg-gray-900 text-gray-100 mt-auto pt-16 pb-8">
       <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <h2 className="text-lg font-semibold">Our Social</h2>
@@ -119,7 +119,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Subscribe */}
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <h3 className="text-lg font-semibold mb-4">Subscribe</h3>
           <p className="text-sm mb-4">Get the latest updates and promotions</p>

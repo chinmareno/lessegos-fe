@@ -3,7 +3,10 @@
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import { LogOut, Menu, UserRound } from "lucide-react";
+import { useAuthStore } from "@/lib/useAuthStore";
+import { handleLogout } from "@/lib/handleLogout";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const navItems = ["home", "products", "about", "articles"];
@@ -15,11 +18,14 @@ const Navbar = () => {
     "🚀 Fast delivery across Indonesia!",
   ];
 
+  const router = useRouter();
+
   const [currentPromo, setCurrentPromo] = useState(0);
   const [fade, setFade] = useState(true);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { userId, clearUserId } = useAuthStore();
 
   const navbarRef = useRef<HTMLDivElement>(null);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -75,6 +81,25 @@ const Navbar = () => {
         </div>
 
         <div className="relative">
+          {userId ? (
+            <button
+              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20 p-2 rounded-md"
+              onClick={async () => {
+                await handleLogout();
+                clearUserId();
+                router.push("/signin");
+              }}
+            >
+              <LogOut className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            </button>
+          ) : (
+            <Link
+              href="/signin"
+              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20 p-2 rounded-md"
+            >
+              <UserRound className="w-6 h-6 md:w-7 md:h-7" />
+            </Link>
+          )}
           <Link
             href="/"
             className="flex w-fit flex-col mt-2 lg:my-[15] mx-auto items-center"
@@ -101,7 +126,7 @@ const Navbar = () => {
             className="lg:hidden absolute top-4 right-4 z-20 p-2 rounded-md"
             aria-label="Toggle mobile menu"
           >
-            <Menu />
+            <Menu className="w-6 h-6 md:w-7 md:h-7" />
           </button>
 
           <hr className="bg-black py-1 mt-4 lg:mt-0" />
@@ -145,7 +170,7 @@ const Navbar = () => {
               aria-label="Close mobile menu"
             >
               <svg
-                className="w-5 h-5"
+                className="w-6 h-6 md:w-7 md:h-7"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -160,7 +185,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Mobile Nav Items */}
           <nav className="flex-1 py-6">
             <ul className="space-y-1">
               {navItems.map((item) => (

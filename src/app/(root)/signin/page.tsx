@@ -1,16 +1,31 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuthStore } from "@/lib/useAuthStore";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type LoginFormInputs = {
   login: string;
   password: string;
 };
 
-const SigninPage = () => {
+const Signin = () => {
   const { register, handleSubmit } = useForm<LoginFormInputs>();
   const router = useRouter();
+  const { setUserId } = useAuthStore();
+
   const onSubmit = async (data: LoginFormInputs) => {
     try {
       const res = await fetch(
@@ -24,62 +39,74 @@ const SigninPage = () => {
             login: data.login,
             password: data.password,
           }),
-          credentials: "include",
         }
       );
-
-      if (!res.ok) {
-        throw new Error("Login failed");
+      if (res.status === 401) {
+        return toast.error("Invalid credentials. Please try again.");
       }
 
       const user = await res.json();
 
       if (user.objectId) {
-        localStorage.setItem("user-id", user.objectId);
+        setUserId(user.objectId);
 
         document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Strict`;
       }
 
-      router.push("/articles");
+      router.push("/");
     } catch (err) {
-      console.error(err);
+      console.error({ thisIsTheCause: err });
     }
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <h2>Log in</h2>
-      <div className="flex gap-1 flex-col max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col">
-            <label htmlFor="login">Email</label>
-            <input
-              id="login"
-              placeholder="enter email"
-              {...register("login", { required: true })}
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="enter password"
-              {...register("password", { required: true })}
-            />
-          </div>
-
-          <button
-            className="bg-amber-400 hover:cursor-pointer mt-3.5"
-            type="submit"
-          >
-            Sign in
-          </button>
-        </form>
-      </div>
+    <div className="flex flex-col gap-6 m-4 items-center">
+      <Card className="w-full max-w-md min-w-[280px]">
+        <CardHeader>
+          <CardTitle>Login to your account</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid gap-3">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="login"
+                placeholder="enter email"
+                {...register("login", { required: true })}
+                type="email"
+                className="w-full max-w-sm min-w-[240px]"
+              />
+            </div>
+            <div className="grid gap-3">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                placeholder="enter password"
+                {...register("password", { required: true })}
+                required
+                className="w-full max-w-sm min-w-[240px]"
+              />
+            </div>
+            <Button type="submit" className="cursor-pointer w-full">
+              Login
+            </Button>
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="underline underline-offset-4">
+                Sign up
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
 
-export default SigninPage;
+export default Signin;

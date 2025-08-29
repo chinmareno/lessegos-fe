@@ -7,11 +7,11 @@ export function middleware(request: NextRequest) {
     .find((c) => c.name.startsWith(cookieNamePrefix));
   const pathname = request.nextUrl.pathname;
 
-  // if (!authCookie) {
-  //   if (pathname !== "/signup" && pathname !== "/signin") {
-  //     return NextResponse.redirect(new URL("/signin", request.url));
-  //   }
-  // }
+  if (!authCookie) {
+    if (pathname === "/create") {
+      return NextResponse.redirect(new URL("/signin", request.url));
+    }
+  }
   if (authCookie) {
     if (pathname === "/signin" || pathname === "/signup") {
       return NextResponse.redirect(new URL("/", request.url));
