@@ -62,7 +62,7 @@ export default function NavbarDesktop() {
   return (
     <div
       ref={navbarRef}
-      className={`hidden lg:block h-[129px] fixed top-0 left-0 w-full bg-white shadow z-20 transform transition-transform duration-300 ${
+      className={`hidden lg:block h-[129px] fixed top-0 left-0 w-full bg-white shadow z-30 transform transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "-translate-y-full"
       }`}
     >

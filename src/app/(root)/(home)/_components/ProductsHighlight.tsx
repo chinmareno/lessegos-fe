@@ -31,7 +31,7 @@ const products = [
 
 export default function ProductsHighlight() {
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16">
       <div className="max-w-6xl mx-auto px-6 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold mb-10">Our Products</h2>
 

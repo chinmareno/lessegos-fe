@@ -92,7 +92,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className={`${lora.className} antialiased`}>
+      <body className={`${lora.className} antialiased `}>
         <Navbar />
         <main>{children}</main>
         <Toaster expand visibleToasts={2} richColors />
