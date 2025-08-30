@@ -50,7 +50,7 @@ const Signin = () => {
       if (user.objectId) {
         setUserId(user.objectId);
 
-        document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Strict`;
+        document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Lax`;
       }
 
       router.push("/");

@@ -85,7 +85,7 @@ const Navbar = () => {
         <div className="relative">
           {userId ? (
             <button
-              className="lg:hidden absolute flex items-center gap-2 bg-amber-200 top-4 left-4 z-20"
+              className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
               onClick={async () => {
                 await handleLogout();
                 clearUserId();
