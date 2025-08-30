@@ -1,6 +1,5 @@
 "use client";
 import Footer from "@/components/Footer";
-import { handleLogout } from "@/lib/handleLogout";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 import { usePathname } from "next/navigation";
@@ -13,7 +12,7 @@ const AppLayout = ({
 }>) => {
   const pathname = usePathname();
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
-  const { userId, clearUserId } = useAuthStore();
+  const { userId, setUserId } = useAuthStore();
   useEffect(() => {
     const allCookies = document.cookie;
 
@@ -24,9 +23,8 @@ const AppLayout = ({
       })
     );
 
-    if (!cookies["user-auth-cookie"] || !userId) {
-      clearUserId();
-      handleLogout();
+    if (cookies["user-auth-cookie"] && !userId) {
+      setUserId(cookies["user-auth-cookie"]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
