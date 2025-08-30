@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,8 +33,11 @@ export default function Create() {
   } = useForm<Inputs>();
   const { setArticles } = useArticlesStore();
   const { userId } = useAuthStore();
+  const router = useRouter();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (!userId) return router.push("/signin");
+
     const dataWithSlug = {
       ...data,
       ownerId: userId,

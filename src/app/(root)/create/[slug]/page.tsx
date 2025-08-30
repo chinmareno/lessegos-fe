@@ -55,6 +55,8 @@ export default function Edit({
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (!userId) return router.push("/signin");
+
     const dataWithCreated = {
       ...data,
       objectId: slug,
