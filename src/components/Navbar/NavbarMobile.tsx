@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { LogOut, Menu, Star, UserRound } from "lucide-react";
 import { useAuthStore } from "@/lib/useAuthStore";
-import { handleLogout } from "@/lib/handleLogout";
 import { useRouter } from "next/navigation";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 
@@ -87,7 +86,6 @@ const Navbar = () => {
             <button
               className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
               onClick={async () => {
-                await handleLogout();
                 clearUserId();
                 router.push("/signin");
               }}

@@ -4,6 +4,7 @@ import { useAuthStore } from "@/lib/useAuthStore";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 const AppLayout = ({
   children,
@@ -14,17 +15,10 @@ const AppLayout = ({
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
   const { userId, setUserId } = useAuthStore();
   useEffect(() => {
-    const allCookies = document.cookie;
+    const userIdCookie = Cookies.get("user-auth-cookie");
 
-    const cookies = Object.fromEntries(
-      allCookies.split("; ").map((c) => {
-        const [key, value] = c.split("=");
-        return [key, decodeURIComponent(value)];
-      })
-    );
-
-    if (cookies["user-auth-cookie"] && !userId) {
-      setUserId(cookies["user-auth-cookie"]);
+    if (userIdCookie && !userId) {
+      setUserId(userIdCookie);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

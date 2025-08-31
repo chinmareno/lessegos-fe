@@ -79,9 +79,9 @@ const SignupPage = () => {
 
       if (user.objectId) {
         setUserId(user.objectId);
-        document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Lax`;
+      } else {
+        throw new Error("Login after registration failed: No user ID returned");
       }
-
       router.push("/");
     } catch (err) {
       console.error(err);

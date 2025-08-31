@@ -4,7 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { LogOut, Star, UserRound } from "lucide-react";
-import { handleLogout } from "@/lib/handleLogout";
 import { useAuthStore } from "@/lib/useAuthStore";
 import { useRouter } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -141,7 +140,6 @@ export default function NavbarDesktop() {
                   className="cursor-pointer flex items-center p-2 rounded-md"
                   onClick={async () => {
                     clearUserId();
-                    await handleLogout();
                     router.push("/signin");
                   }}
                 >

@@ -49,13 +49,13 @@ const Signin = () => {
 
       if (user.objectId) {
         setUserId(user.objectId);
-
-        document.cookie = `user-auth-cookie=${user.objectId}; path=/; max-age=86400; Secure; SameSite=Lax`;
+      } else {
+        throw new Error("Login failed: No user ID returned");
       }
-
       router.push("/");
     } catch (err) {
-      console.error({ thisIsTheCause: err });
+      console.error(err);
+      toast.error("An error occurred. Please try again.");
     }
   };
 
