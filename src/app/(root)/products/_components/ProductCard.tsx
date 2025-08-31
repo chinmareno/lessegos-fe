@@ -12,7 +12,7 @@ interface ProductCardProps {
   discountPrice?: number;
   sizes: string[];
   imageUrl: string;
-  hoverImageUrl?: string;
+  hoverImageUrl: string;
   placeholderLogo: string;
   productLink: string;
   wishlist: boolean;
@@ -79,15 +79,27 @@ export default function ProductCard({
               className="object-cover opacity-40"
             />
           )}
-          <Image
-            src={hovered && hoverImageUrl ? hoverImageUrl : imageUrl}
-            alt={name}
-            fill
-            className={`object-cover transition-opacity duration-500 ${
-              imgLoaded ? "opacity-100" : "opacity-0"
-            }`}
-            onLoad={() => setImgLoaded(true)}
-          />
+          {hovered ? (
+            <Image
+              src={hoverImageUrl}
+              alt={name}
+              fill
+              className={`object-cover transition-opacity duration-500 ${
+                imgLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setImgLoaded(true)}
+            />
+          ) : (
+            <Image
+              src={imageUrl}
+              alt={name}
+              fill
+              className={`object-cover transition-opacity duration-500 ${
+                imgLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setImgLoaded(true)}
+            />
+          )}
         </div>
         <div className="py-2 pr-2 text-sm">
           <h2 className="font-semibold text-base leading-5 min-h-[2.5rem]">
