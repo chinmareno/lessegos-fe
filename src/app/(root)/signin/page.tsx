@@ -52,7 +52,7 @@ const Signin = () => {
       } else {
         throw new Error("Login failed: No user ID returned");
       }
-      router.push("/");
+      router.refresh();
     } catch (err) {
       console.error(err);
       toast.error("An error occurred. Please try again.");
