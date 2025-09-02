@@ -173,7 +173,7 @@ const ProductsPage = () => {
 
   return (
     <div className="mt-7 mb-12 mx-[calc(100vw*1/20)] lg:mx-[calc(100vw*1/10)]">
-      <h2 className="pb-6 uppercase font-thin font-sans text-red-500 text-2xl">
+      <h2 className="uppercase font-thin font-sans text-red-500 text-2xl">
         <span>{wishlistMode ? "Wishlist" : "Product"}</span>
         <span
           className={`text-black transition-opacity ml-2 duration-500 ${
@@ -183,6 +183,7 @@ const ProductsPage = () => {
           {category === "All" ? "" : category}
         </span>
       </h2>
+      <h4 className="pb-6 text-gray-500 text-sm">Price may vary</h4>
       <hr className="bg-gray-300 py-[0.5px] mb-8" />
 
       <div className="flex">
