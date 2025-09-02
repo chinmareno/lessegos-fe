@@ -8,8 +8,6 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (!authCookie) {
-    console.log("authhhhhhhhhhhhhhhhhhh");
-    console.log(authCookie);
     if (pathname === "/create") {
       return NextResponse.redirect(new URL("/signin", request.url));
     }
