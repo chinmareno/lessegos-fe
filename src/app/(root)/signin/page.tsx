@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuthStore } from "@/lib/useAuthStore";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ type LoginFormInputs = {
 const Signin = () => {
   const { register, handleSubmit } = useForm<LoginFormInputs>();
   const router = useRouter();
-  const { setUserId } = useAuthStore();
+  const { setAuthCookie } = useAuthCookie();
 
   const onSubmit = async (data: LoginFormInputs) => {
     try {
@@ -48,7 +48,7 @@ const Signin = () => {
       const user = await res.json();
 
       if (user.objectId) {
-        setUserId(user.objectId);
+        setAuthCookie(user.objectId);
       } else {
         throw new Error("Login failed: No user ID returned");
       }

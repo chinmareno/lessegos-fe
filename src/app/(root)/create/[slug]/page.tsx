@@ -16,8 +16,8 @@ import {
 import { useArticlesStore } from "@/lib/useArticlesStore";
 import { use, useEffect } from "react";
 import { fetchArticles } from "@/lib/fetchArticles";
-import { useAuthStore } from "@/lib/useAuthStore";
 import Link from "next/link";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 type Inputs = {
   author: string;
@@ -30,17 +30,17 @@ export default function Edit({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { userId } = useAuthStore();
+  const { authCookie } = useAuthCookie();
   const router = useRouter();
   const { slug } = use(params);
   const { articles, setArticles } = useArticlesStore();
   const selectedArticle = articles.find((article) => article.objectId === slug);
 
   useEffect(() => {
-    if (selectedArticle && selectedArticle.ownerId !== userId) {
+    if (selectedArticle && selectedArticle.ownerId !== authCookie) {
       router.push("/articles/" + slug);
     }
-  }, [selectedArticle, userId, router, slug]);
+  }, [selectedArticle, authCookie, router, slug]);
 
   const {
     register,
@@ -55,12 +55,12 @@ export default function Edit({
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    if (!userId) return router.push("/signin");
+    if (!authCookie) return router.push("/signin");
 
     const dataWithCreated = {
       ...data,
       objectId: slug,
-      ownerId: userId,
+      ownerId: authCookie,
     };
 
     const res = await fetch(

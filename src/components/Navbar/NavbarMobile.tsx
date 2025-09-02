@@ -4,9 +4,9 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { LogOut, Menu, Star, UserRound } from "lucide-react";
-import { useAuthStore } from "@/lib/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 const Navbar = () => {
   const navItems = ["home", "products", "about", "articles"] as const;
@@ -25,7 +25,7 @@ const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { userId, clearUserId } = useAuthStore();
+  const { authCookie, clearAuthCookie } = useAuthCookie();
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
 
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -82,11 +82,11 @@ const Navbar = () => {
         </div>
 
         <div className="relative">
-          {userId ? (
+          {authCookie ? (
             <button
               className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
-              onClick={async () => {
-                clearUserId();
+              onClick={() => {
+                clearAuthCookie();
                 router.push("/signin");
               }}
             >
@@ -123,6 +123,7 @@ const Navbar = () => {
           <div className="lg:hidden absolute flex items-center top-4 right-1 sm:right-4 z-20">
             <button
               onClick={() => {
+                if (!authCookie) return router.push("/signin");
                 setWishlistMode(true);
                 router.push("/products");
               }}

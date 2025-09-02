@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useAuthStore } from "@/lib/useAuthStore";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,7 +25,7 @@ type SignupFormInputs = {
 const SignupPage = () => {
   const { register, handleSubmit } = useForm<SignupFormInputs>();
   const router = useRouter();
-  const { setUserId } = useAuthStore();
+  const { setAuthCookie } = useAuthCookie();
 
   const onSubmit = async (data: SignupFormInputs) => {
     if (data.password !== data.confirmPassword) {
@@ -78,7 +78,7 @@ const SignupPage = () => {
       const user = await res.json();
 
       if (user.objectId) {
-        setUserId(user.objectId);
+        setAuthCookie(user.objectId);
       } else {
         throw new Error("Login after registration failed: No user ID returned");
       }

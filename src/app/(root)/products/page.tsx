@@ -15,9 +15,9 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuthStore } from "@/lib/useAuthStore";
 import { useWishlistModeStore } from "../../../lib/useWishlistModeStore";
 import { useRouter } from "next/navigation";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 const ITEMS_PER_PAGE = 36;
 
@@ -48,12 +48,12 @@ const ProductsPage = () => {
   const totalPage = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
   const router = useRouter();
-  const { userId } = useAuthStore();
+  const { authCookie } = useAuthCookie();
 
   useEffect(() => {
     (async function fetchWishlist() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${userId}'`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${authCookie}'`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -130,9 +130,9 @@ const ProductsPage = () => {
   ]);
 
   const handleWishlistClick = async (productName: string) => {
-    if (!userId) return router.push("/signin");
+    if (!authCookie) return router.push("/signin");
 
-    const data = { productName, ownerId: userId };
+    const data = { productName, ownerId: authCookie };
 
     const foundedWishlist = wishlist.find(
       (item) => item.productName === productName
@@ -157,7 +157,7 @@ const ProductsPage = () => {
     }
     (async function fetchWishlist() {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${userId}'`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${authCookie}'`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },

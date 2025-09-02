@@ -1,19 +1,17 @@
 "use client";
 
-import { useAuthStore } from "@/lib/useAuthStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Cookies from "js-cookie";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 const CreateArticleLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { userId } = useAuthStore();
-  const userAuthCookie = Cookies.get("user-auth-cookie");
+  const { authCookie } = useAuthCookie();
   useEffect(() => {
-    if (!userId || !userAuthCookie) {
+    if (!authCookie) {
       router.push("/signin");
     }
-  }, [userId, userAuthCookie]);
+  }, [authCookie]);
 
   return <div>{children}</div>;
 };

@@ -1,7 +1,6 @@
 "use client";
 import { ArticleType, fetchArticles } from "@/lib/fetchArticles";
 import { useArticlesStore } from "@/lib/useArticlesStore";
-import { useAuthStore } from "@/lib/useAuthStore";
 import { SquarePen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
@@ -18,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 export default function Slug({
   params,
@@ -30,7 +30,7 @@ export default function Slug({
     ArticleType | undefined | null
   >(null);
 
-  const { userId } = useAuthStore();
+  const { authCookie } = useAuthCookie();
   const router = useRouter();
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function Slug({
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
       <div className="bg-white shadow-md rounded-2xl p-6 border">
-        {selectedArticle.ownerId === userId && (
+        {selectedArticle.ownerId === authCookie && (
           <div className="flex justify-end gap-4">
             <Dialog>
               <DialogTrigger asChild>

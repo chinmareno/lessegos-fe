@@ -7,7 +7,6 @@ import {
   ArticleCategory,
   useArticleTypeStore,
 } from "@/lib/useArticleTypeStore";
-import { useAuthStore } from "@/lib/useAuthStore";
 import { ChevronsDown, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -18,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useAuthCookie } from "@/lib/useAuthCookie";
 
 type SortBy = "newest" | "oldest";
 
@@ -30,7 +30,7 @@ const articleTypes = [
 const Articles = () => {
   const { articleType, setArticleType } = useArticleTypeStore();
   const { articles, setArticles } = useArticlesStore();
-  const { userId } = useAuthStore();
+  const { authCookie } = useAuthCookie();
   const [filteredArticles, setFilteredArticles] = useState<ArticleType[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>("newest");
 
@@ -52,7 +52,7 @@ const Articles = () => {
         return article.ownerId === process.env.NEXT_PUBLIC_SUPER_ADMIN_OWNER_ID;
       if (articleType === "community")
         return article.ownerId !== process.env.NEXT_PUBLIC_SUPER_ADMIN_OWNER_ID;
-      if (articleType === "mine") return article.ownerId === userId;
+      if (articleType === "mine") return article.ownerId === authCookie;
     });
 
     updatedArticles.sort((a, b) => {
@@ -66,7 +66,7 @@ const Articles = () => {
     });
 
     setFilteredArticles(updatedArticles);
-  }, [articleType, articles, userId, sortBy]);
+  }, [articleType, articles, authCookie, sortBy]);
 
   return (
     <div className="flex flex-col gap-5 mt-10 mb-20">
