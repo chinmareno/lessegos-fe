@@ -9,7 +9,6 @@ const CreateArticleLayout = ({ children }: { children: React.ReactNode }) => {
   const { authCookie } = useAuthCookie();
   useEffect(() => {
     if (!authCookie) {
-      console.error("redirecting to signin from layout create");
       router.push("/signin");
     }
   }, [authCookie]);

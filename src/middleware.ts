@@ -9,7 +9,6 @@ export function middleware(request: NextRequest) {
 
   if (!authCookie) {
     if (pathname === "/create") {
-      console.error("redirecting to signin from middleware");
       return NextResponse.redirect(new URL("/signin", request.url));
     }
   }
