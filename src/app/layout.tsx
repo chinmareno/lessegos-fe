@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const lora = Lora({
   subsets: ["latin"],
@@ -91,13 +92,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
-      <body className={`${lora.className} antialiased `}>
-        <Navbar />
-        <main>{children}</main>
-        <Toaster expand visibleToasts={2} richColors />
-        <Analytics />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="id">
+        <body className={`${lora.className} antialiased `}>
+          <Navbar />
+          <main>{children}</main>
+          <Toaster expand visibleToasts={2} richColors />
+          <Analytics />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

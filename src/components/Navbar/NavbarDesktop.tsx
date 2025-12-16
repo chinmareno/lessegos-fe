@@ -7,7 +7,7 @@ import { LogOut, Star, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
 
 const navItems = ["home", "products", "about", "articles"] as const;
 const promotions = [
@@ -26,7 +26,7 @@ export default function NavbarDesktop() {
   const [navbarHeight, setNavbarHeight] = useState(0);
 
   const router = useRouter();
-  const { authCookie, clearAuthCookie } = useAuthCookie();
+  const { userId, signOut, redirectToSignIn } = useAuth();
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
 
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function NavbarDesktop() {
             <TooltipTrigger asChild>
               <button
                 onClick={() => {
-                  if (!authCookie) return router.push("/signin");
+                  if (!userId) return redirectToSignIn();
                   setWishlistMode(true);
                   router.push("/products");
                 }}
@@ -134,14 +134,13 @@ export default function NavbarDesktop() {
               <p>Wishlist</p>
             </TooltipContent>
           </Tooltip>
-          {authCookie ? (
+          {userId ? (
             <Tooltip delayDuration={500}>
               <TooltipTrigger asChild>
                 <button
                   className="cursor-pointer flex items-center p-2 rounded-md"
                   onClick={async () => {
-                    clearAuthCookie();
-                    router.push("/signin");
+                    signOut();
                   }}
                 >
                   <LogOut className="w-7 h-7" />
@@ -154,12 +153,12 @@ export default function NavbarDesktop() {
           ) : (
             <Tooltip delayDuration={500}>
               <TooltipTrigger asChild>
-                <Link
-                  href="/signin"
-                  className="flex items-center gap-2 p-2 rounded-md"
+                <button
+                  onClick={() => redirectToSignIn()}
+                  className="flex items-center gap-2 cursor-pointer p-2 rounded-md"
                 >
                   <UserRound className="w-6 h-6 md:w-7 md:h-7" />
-                </Link>
+                </button>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Login</p>

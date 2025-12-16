@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,9 @@ import { useArticlesStore } from "@/lib/useArticlesStore";
 import { use, useEffect } from "react";
 import { fetchArticles } from "@/lib/fetchArticles";
 import Link from "next/link";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
+import { axiosInstance } from "@/lib/axios";
+import { toast } from "sonner";
 
 type Inputs = {
   author: string;
@@ -30,17 +32,17 @@ export default function Edit({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { authCookie } = useAuthCookie();
+  const { userId, redirectToSignIn } = useAuth();
   const router = useRouter();
   const { slug } = use(params);
   const { articles, setArticles } = useArticlesStore();
-  const selectedArticle = articles.find((article) => article.objectId === slug);
+  const selectedArticle = articles.find((article) => article.id === slug);
 
   useEffect(() => {
-    if (selectedArticle && selectedArticle.ownerId !== authCookie) {
+    if (selectedArticle && selectedArticle.ownerId !== userId) {
       router.push("/articles/" + slug);
     }
-  }, [selectedArticle, authCookie, router, slug]);
+  }, [selectedArticle, userId, router, slug]);
 
   const {
     register,
@@ -55,26 +57,25 @@ export default function Edit({
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    if (!authCookie) return router.push("/signin");
+    if (!userId) return redirectToSignIn();
 
     const dataWithCreated = {
       ...data,
       objectId: slug,
-      ownerId: authCookie,
+      ownerId: userId,
     };
 
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles/${slug}`,
-      {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataWithCreated),
-      }
-    );
-    const result = await res.json();
-    const freshArticles = await fetchArticles();
-    setArticles(freshArticles);
-    redirect("/articles/" + result.objectId);
+    try {
+      await axiosInstance.patch("/article/" + slug, {
+        ...dataWithCreated,
+      });
+
+      const freshArticles = await fetchArticles();
+      setArticles(freshArticles);
+      router.push("/articles/" + slug);
+    } catch (error) {
+      toast.error("Fail to edit");
+    }
   };
 
   useEffect(() => {

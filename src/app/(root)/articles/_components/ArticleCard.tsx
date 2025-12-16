@@ -6,7 +6,7 @@ type Props = {
   content: string;
   author: string;
   created: string;
-  objectId: string;
+  id: string;
 };
 
 export default function ArticleCard({
@@ -14,12 +14,12 @@ export default function ArticleCard({
   content,
   created,
   title,
-  objectId,
+  id,
 }: Props) {
   return (
     <div className="h-full min-w-72 rounded-xl bg-white shadow-sm overflow-hidden border hover:bg-gray-100 transition">
       <Link
-        href={`/articles/${objectId}`}
+        href={`/articles/${id}`}
         scroll={false}
         prefetch={false}
         className="flex flex-col h-full"

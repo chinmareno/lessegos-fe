@@ -16,8 +16,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useWishlistModeStore } from "../../../lib/useWishlistModeStore";
-import { useRouter } from "next/navigation";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
+import { axiosInstance } from "@/lib/axios";
 
 const ITEMS_PER_PAGE = 36;
 
@@ -28,8 +28,8 @@ export type SortOption =
 
 export type Wishlist = {
   productName: string;
-  ownerId: string;
-  objectId: string;
+  userId: string;
+  id: string;
 };
 
 const ProductsPage = () => {
@@ -47,26 +47,23 @@ const ProductsPage = () => {
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
   const totalPage = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
 
-  const router = useRouter();
-  const { authCookie } = useAuthCookie();
+  const { userId, redirectToSignIn } = useAuth();
 
   useEffect(() => {
-    (async function fetchWishlist() {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${authCookie}'`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      if (res.ok) {
-        setWishlist(await res.json());
-      } else {
+    async function fetchWishlist() {
+      try {
+        const res = await axiosInstance.get(`/wishlist?userId=${userId}`);
+        setWishlist(await res.data);
+      } catch (err) {
+        console.log(err);
         toast.error("Failed to fetch wishlist");
       }
-    })();
+    }
+
+    if (userId) fetchWishlist();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (category === "") return;
@@ -130,9 +127,9 @@ const ProductsPage = () => {
   ]);
 
   const handleWishlistClick = async (productName: string) => {
-    if (!authCookie) return router.push("/signin");
+    if (!userId) return redirectToSignIn();
 
-    const data = { productName, ownerId: authCookie };
+    const data = { productName, userId };
 
     const foundedWishlist = wishlist.find(
       (item) => item.productName === productName
@@ -141,31 +138,17 @@ const ProductsPage = () => {
     const isAdding = !foundedWishlist;
 
     if (isAdding) {
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      await axiosInstance.post("/wishlist", data);
       toast.success("Added to wishlist");
     } else {
-      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ objectId: foundedWishlist.objectId }),
-      });
+      await axiosInstance.delete(`/wishlist/${foundedWishlist.id}`);
       toast.success("Removed from wishlist");
     }
     (async function fetchWishlist() {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/data/wishlist?where=ownerId%3D'${authCookie}'`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      if (res.ok) {
-        setWishlist(await res.json());
-      } else {
+      try {
+        const res = await axiosInstance.get(`/wishlist?userId=${userId}`);
+        setWishlist(await res.data);
+      } catch (err) {
         toast.error("Failed to fetch wishlist");
       }
     })();

@@ -18,6 +18,5 @@ export const useAuthCookie = () => {
   const clearAuthCookie = () => {
     Cookies.remove(COOKIE_NAME);
   };
-
   return { authCookie, setAuthCookie, clearAuthCookie };
 };

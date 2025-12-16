@@ -1,28 +1,19 @@
-import { NextResponse, NextRequest } from "next/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export function middleware(request: NextRequest) {
-  const cookieNamePrefix = "user-auth-cookie";
-  const authCookie = request.cookies
-    .getAll()
-    .find((c) => c.name.startsWith(cookieNamePrefix));
-  const pathname = request.nextUrl.pathname;
+export default clerkMiddleware(async (auth, req) => {
+  const pathname = req.nextUrl.pathname;
+  const { isAuthenticated, redirectToSignIn } = await auth();
 
-  if (!authCookie) {
-    if (pathname === "/create") {
-      return NextResponse.redirect(new URL("/signin", request.url));
-    }
+  if (!isAuthenticated && pathname === "/create") {
+    return redirectToSignIn();
   }
-  if (authCookie) {
-    if (pathname === "/signin" || pathname === "/signup") {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-  }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|css|js|webp)).*)",
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
   ],
 };

@@ -17,7 +17,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
+import { axiosInstance } from "@/lib/axios";
 
 export default function Slug({
   params,
@@ -30,18 +31,18 @@ export default function Slug({
     ArticleType | undefined | null
   >(null);
 
-  const { authCookie } = useAuthCookie();
+  const { userId } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (articles.length !== 0) {
-      const currArticle = articles.find((article) => article.objectId === slug);
+      const currArticle = articles.find((article) => article.id === slug);
       return setSelectedArticle(currArticle);
     }
     (async function () {
       const res = await fetchArticles();
       setArticles(res);
-      const currArticle = res.find((article) => article.objectId === slug);
+      const currArticle = res.find((article) => article.id === slug);
       setSelectedArticle(currArticle);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,22 +73,13 @@ export default function Slug({
   const date = new Date(selectedArticle.created);
 
   const handleDeleteArticle = async () => {
-    const data = {
-      objectId: slug,
-    };
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles`,
-      {
-        method: "DELETE",
-        body: JSON.stringify(data),
-      }
-    );
-    if (res.ok) {
+    try {
+      await axiosInstance.delete("/article/" + slug);
       const freshArticles = await fetchArticles();
       setArticles(freshArticles);
       router.push("/articles");
-    } else {
+    } catch (error) {
+      console.log(error);
       toast.error("Failed to delete the article. Please try again.");
     }
   };
@@ -95,7 +87,7 @@ export default function Slug({
   return (
     <div className="max-w-3xl mx-auto px-6 py-10">
       <div className="bg-white shadow-md rounded-2xl p-6 border">
-        {selectedArticle.ownerId === authCookie && (
+        {selectedArticle.ownerId === userId && (
           <div className="flex justify-end gap-4">
             <Dialog>
               <DialogTrigger asChild>

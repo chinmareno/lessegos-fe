@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,11 +13,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { fetchArticles } from "@/lib/fetchArticles";
+import { ArticleType, fetchArticles } from "@/lib/fetchArticles";
 import { useArticlesStore } from "@/lib/useArticlesStore";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
+import { axiosInstance } from "@/lib/axios";
+import { useState } from "react";
 
 type Inputs = {
   author: string;
@@ -32,35 +34,32 @@ export default function Create() {
     formState: { errors },
   } = useForm<Inputs>();
   const { setArticles } = useArticlesStore();
-  const { authCookie } = useAuthCookie();
+  const { userId, redirectToSignIn } = useAuth();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    if (!authCookie) return router.push("/signin");
-
+    if (!userId) return redirectToSignIn();
+    setIsSubmitting(true);
     const dataWithSlug = {
       ...data,
-      ownerId: authCookie,
+      ownerId: userId,
     };
-
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/data/articles`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(dataWithSlug),
-      }
-    );
-    if (res.ok) {
-      const result = await res.json();
+    try {
+      console.log(dataWithSlug);
+      const res = await axiosInstance.post("/article", {
+        ...dataWithSlug,
+      });
+      const article = res.data as ArticleType;
       const freshArticle = await fetchArticles();
+
       setArticles(freshArticle);
-      redirect("/articles/" + result.objectId);
-    } else {
+      router.push("/articles/" + article.id);
+    } catch (error) {
+      console.log(error);
       toast.error("Failed to create article. Please try again.");
-      console.error("Failed to create article:", { res });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -115,7 +114,11 @@ export default function Create() {
           </CardContent>
 
           <CardFooter className="mt-6">
-            <Button type="submit" className="w-full cursor-pointer">
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              className="w-full cursor-pointer"
+            >
               Create Article
             </Button>
           </CardFooter>

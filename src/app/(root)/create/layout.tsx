@@ -1,17 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
 
 const CreateArticleLayout = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
-  const { authCookie } = useAuthCookie();
+  const { userId, redirectToSignIn, isLoading } = useAuth();
+
   useEffect(() => {
-    if (!authCookie) {
-      router.push("/signin");
-    }
-  }, [authCookie]);
+    if (!userId && !isLoading) redirectToSignIn();
+  }, [userId, isLoading, redirectToSignIn]);
 
   return <div>{children}</div>;
 };

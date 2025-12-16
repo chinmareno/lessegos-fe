@@ -6,7 +6,7 @@ import Image from "next/image";
 import { LogOut, Menu, Star, UserRound } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
 
 const Navbar = () => {
   const navItems = ["home", "products", "about", "articles"] as const;
@@ -25,8 +25,9 @@ const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { authCookie, clearAuthCookie } = useAuthCookie();
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
+
+  const { userId, signOut, redirectToSignIn } = useAuth();
 
   const navbarRef = useRef<HTMLDivElement>(null);
   const [navbarHeight, setNavbarHeight] = useState(0);
@@ -82,23 +83,22 @@ const Navbar = () => {
         </div>
 
         <div className="relative">
-          {authCookie ? (
+          {userId ? (
             <button
               className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
               onClick={() => {
-                clearAuthCookie();
-                router.push("/signin");
+                signOut();
               }}
             >
               <LogOut className="w-6 h-6 md:w-7 md:h-7" />
             </button>
           ) : (
-            <Link
-              href="/signin"
+            <button
+              onClick={() => redirectToSignIn()}
               className="lg:hidden absolute flex items-center gap-2 top-4 left-4 z-20"
             >
               <UserRound className="w-6 h-6 md:w-7 md:h-7" />
-            </Link>
+            </button>
           )}
           <Link
             href="/"
@@ -123,7 +123,7 @@ const Navbar = () => {
           <div className="lg:hidden absolute flex items-center top-4 right-1 sm:right-4 z-20">
             <button
               onClick={() => {
-                if (!authCookie) return router.push("/signin");
+                if (!userId) return redirectToSignIn();
                 setWishlistMode(true);
                 router.push("/products");
               }}

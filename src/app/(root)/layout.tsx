@@ -3,8 +3,7 @@ import Footer from "@/components/Footer";
 import { useWishlistModeStore } from "@/lib/useWishlistModeStore";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import Cookies from "js-cookie";
-import { useAuthCookie } from "@/lib/useAuthCookie";
+import { useAuth } from "@/lib/useAuth";
 
 const AppLayout = ({
   children,
@@ -13,13 +12,13 @@ const AppLayout = ({
 }>) => {
   const pathname = usePathname();
   const { setWishlistMode, wishlistMode } = useWishlistModeStore();
-  const { authCookie } = useAuthCookie();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if ((wishlistMode && pathname !== "/products") || !authCookie)
+    if ((wishlistMode && pathname !== "/products") || !isAuthenticated)
       setWishlistMode(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, authCookie]);
+  }, [pathname, isAuthenticated]);
 
   return (
     <div className="pt-[121px] lg:pt-[192px]">
